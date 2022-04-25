@@ -2,8 +2,8 @@
 
 public class Hexagon : MonoBehaviour {
 
-    private void Awake() {
-        GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(0.2f);
+    public void Init(float height) {
+        GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(height);
     }
 
 }
