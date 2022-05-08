@@ -9,6 +9,14 @@ public class HexagonGrid : MonoBehaviour {
     private static readonly float INNER_RADIUS = Mathf.Sin(Mathf.Deg2Rad * 60);
 
     private void Start() {
+        GenerateGrid();
+    }
+
+    public void GenerateGrid() {
+        for (int i = transform.childCount - 1; i >= 0; --i) {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+
         for (int x = 0; x < size.x; x++) {
             for (int z = 0; z < size.z; z++) {
                 // Vector3 position = new Vector3(2.0f * INNER_RADIUS * x + INNER_RADIUS * z, 0, 1.5f * z);
