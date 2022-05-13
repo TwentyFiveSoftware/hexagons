@@ -16,6 +16,17 @@ public class Hexagon : MonoBehaviour {
         }
     }
 
+    public void InitBuilding(Building building) {
+        gameObject.AddComponent<BuildingData>().building = building;
+        
+        gameObject.tag = "BUILDING";
+        
+        MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = GetComponent<MeshFilter>().sharedMesh;
+        meshCollider.convex = true;
+        meshCollider.isTrigger = true;
+    }
+
     public static Vector3 CalculateHexagonWorldPosition(Vector2Int position) {
         float innerRadius = Mathf.Sin(Mathf.Deg2Rad * 60);
         return new Vector3(2.0f * innerRadius * position.x + innerRadius * position.y, 0, 1.5f * position.y);

@@ -31,7 +31,8 @@ public class HexagonMap : MonoBehaviour {
 
         foreach (Building building in buildings) {
             float height = 3.0f + GetHeightAt(building.location);
-            GenerateHexagonAt(building.location, HexagonType.BUILDING, height);
+            GenerateHexagonAt(building.location, HexagonType.BUILDING, height).InitBuilding(building);
+
             generatedHexagonPositions.Add(building.location);
             mapOutline.Add(building.location);
 
@@ -86,11 +87,14 @@ public class HexagonMap : MonoBehaviour {
         return heightMapScale.y * Mathf.PerlinNoise(position.x * heightMapScale.x, position.y * heightMapScale.z);
     }
 
-    private void GenerateHexagonAt(Vector2Int position, HexagonType type, float height) {
-        GameObject hexagon = Instantiate(hexagonPrefab, Hexagon.CalculateHexagonWorldPosition(position),
+    private Hexagon GenerateHexagonAt(Vector2Int position, HexagonType type, float height) {
+        GameObject hexagonObject = Instantiate(hexagonPrefab, Hexagon.CalculateHexagonWorldPosition(position),
             Quaternion.Euler(Vector3.up * 90));
-        hexagon.transform.SetParent(transform);
-        hexagon.GetComponent<Hexagon>().Init(height, type);
+        hexagonObject.transform.SetParent(transform);
+
+        Hexagon hexagon = hexagonObject.GetComponent<Hexagon>();
+        hexagon.Init(height, type);
+        return hexagon;
     }
 
 }
