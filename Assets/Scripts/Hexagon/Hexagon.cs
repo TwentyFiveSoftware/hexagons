@@ -4,6 +4,7 @@ using UnityEngine;
 public class Hexagon : MonoBehaviour {
 
     public List<HexagonTypeData> hexagonTypeData;
+    public float buildingSizeMultiplier;
 
     public void Init(float height, HexagonType type) {
         GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(height);
@@ -18,13 +19,16 @@ public class Hexagon : MonoBehaviour {
 
     public void InitBuilding(Building building) {
         gameObject.AddComponent<BuildingData>().building = building;
-        
+
         gameObject.tag = "BUILDING";
-        
+
         MeshCollider meshCollider = gameObject.AddComponent<MeshCollider>();
         meshCollider.sharedMesh = GetComponent<MeshFilter>().sharedMesh;
         meshCollider.convex = true;
         meshCollider.isTrigger = true;
+
+        transform.localScale = new Vector3(transform.localScale.x * buildingSizeMultiplier, transform.localScale.y,
+            transform.localScale.z * buildingSizeMultiplier);
     }
 
     public static Vector3 CalculateHexagonWorldPosition(Vector2Int position) {

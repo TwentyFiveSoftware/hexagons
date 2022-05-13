@@ -103,3 +103,4 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 40f6fae7612bc424ba8c547aed56a375, type: 2}
   - type: 2
     material: {fileID: 2100000, guid: d437ae1022985e24a8c1f3a6ab1541d7, type: 2}
+  buildingSizeMultiplier: 1.8

@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour {
 
     public float panSensitivity = 0.3f;
-    public float tiltSensitivity = 0.5f;
+    public float tiltSensitivity = 0.2f;
     public float moveSensitivity = 1.0f;
 
     private Transform cameraWorldPoint;
