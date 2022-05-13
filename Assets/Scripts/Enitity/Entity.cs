@@ -15,16 +15,6 @@ public class Entity : MonoBehaviour {
         foreach (Vector2Int position in path.hexagons) {
             remainingPath.Add(GetWorldPositionWithHeight(position));
         }
-
-        if (remainingPath.Count == 0) {
-            Destroy(gameObject);
-            return;
-        }
-
-        if ((remainingPath[0] - transform.position).sqrMagnitude >
-            (remainingPath[^1] - transform.position).sqrMagnitude) {
-            remainingPath.Reverse();
-        }
     }
 
     public static Vector3 GetWorldPositionWithHeight(Vector2Int position) {

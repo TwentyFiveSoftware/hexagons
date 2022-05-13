@@ -124,7 +124,7 @@ public static class MapGenerator {
         path.RemoveAt(0);
         path.RemoveAt(path.Count - 1);
 
-        return new Path { hexagons = path };
+        return new Path { hexagons = path, a = a, b = b };
     }
 
 }
