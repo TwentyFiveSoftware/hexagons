@@ -1,15 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public class Hexagon : MonoBehaviour {
-
-    public Vector2Int coordinates;
 
     public List<HexagonTypeData> hexagonTypeData;
 
-    public void Init(float height, HexagonType type, Vector2Int hexCoords) {
-        this.coordinates = hexCoords;
+    public void Init(float height, HexagonType type) {
         GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(height);
 
         if (hexagonTypeData.Exists(data => data.type == type)) {
@@ -18,6 +14,11 @@ public class Hexagon : MonoBehaviour {
         } else {
             Debug.LogError("HexagonTypeData not found for type '" + type + "'");
         }
+    }
+
+    public static Vector3 CalculateHexagonWorldPosition(Vector2Int position) {
+        float innerRadius = Mathf.Sin(Mathf.Deg2Rad * 60);
+        return new Vector3(2.0f * innerRadius * position.x + innerRadius * position.y, 0, 1.5f * position.y);
     }
 
 }
