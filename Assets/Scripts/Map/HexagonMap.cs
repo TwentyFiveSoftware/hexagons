@@ -48,16 +48,16 @@ public class HexagonMap : MonoBehaviour {
             }
         }
 
-        for (int x = -buildingsBaseDistance / 2; x < buildingsPerAxis * buildingsBaseDistance; x++) {
-            for (int z = -buildingsBaseDistance / 2; z < buildingsPerAxis * buildingsBaseDistance; z++) {
-                Vector2Int position = new Vector2Int(x - z / 2, z);
-
-                if (!generatedHexagonPositions.Contains(position)) {
-                    float height = 0.5f + GetHeightAt(position);
-                    GenerateHexagonAt(position, HexagonType.DEFAULT, height);
-                }
-            }
-        }
+        // for (int x = -buildingsBaseDistance / 2; x < buildingsPerAxis * buildingsBaseDistance; x++) {
+        //     for (int z = -buildingsBaseDistance / 2; z < buildingsPerAxis * buildingsBaseDistance; z++) {
+        //         Vector2Int position = new Vector2Int(x - z / 2, z);
+        //
+        //         if (!generatedHexagonPositions.Contains(position)) {
+        //             float height = 0.5f + GetHeightAt(position);
+        //             GenerateHexagonAt(position, HexagonType.DEFAULT, height);
+        //         }
+        //     }
+        // }
     }
 
     private float GetHeightAt(Vector2Int position) {

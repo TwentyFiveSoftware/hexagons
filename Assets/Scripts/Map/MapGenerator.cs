@@ -6,10 +6,8 @@ using Random = UnityEngine.Random;
 public static class MapGenerator {
 
     public static List<Building> GenerateBuildings(int buildingsPerAxis, int baseDistance, float avgOffset) {
-        Dictionary<Vector2Int, Dictionary<Vector2Int, Path>> buildingPositions =
-            new Dictionary<Vector2Int, Dictionary<Vector2Int, Path>>();
-
-        Vector2Int[,] grid = new Vector2Int[buildingsPerAxis, buildingsPerAxis];
+        List<Building> buildings = new List<Building>();
+        Building[,] grid = new Building[buildingsPerAxis, buildingsPerAxis];
 
         for (int x = 0; x < buildingsPerAxis; x++) {
             for (int z = 0; z < buildingsPerAxis; z++) {
@@ -19,63 +17,19 @@ public static class MapGenerator {
                 Vector2Int offset = new Vector2Int(Mathf.RoundToInt(Mathf.Cos(degree) * radius),
                     Mathf.RoundToInt(Mathf.Sin(degree) * radius));
 
-                Vector2Int pos = new Vector2Int((x - z / 2), z) * baseDistance + offset;
-                grid[x, z] = pos;
-            }
-        }
-
-        for (int x = 0; x < buildingsPerAxis; x++) {
-            for (int z = 0; z < buildingsPerAxis; z++) {
-                List<Vector2Int> destinations = new List<Vector2Int>();
-
-                for (int i = 0; i < Mathf.FloorToInt(Random.Range(0, 8)); i++) {
-                    int xOffset = Mathf.RoundToInt(Random.Range(-1, 1));
-                    int zOffset = Mathf.RoundToInt(Random.Range(-1, 1));
-
-                    if (xOffset == 0 && zOffset == 0) {
-                        continue;
-                    }
-
-                    if (x + xOffset < 0 || x + xOffset >= buildingsPerAxis || z + zOffset < 0 ||
-                        z + zOffset >= buildingsPerAxis) {
-                        continue;
-                    }
-
-                    Vector2Int destination = new Vector2Int(x + xOffset, z + zOffset);
-                    if (!destinations.Contains(destination)) {
-                        destinations.Add(destination);
-                    }
-                }
-
-                Dictionary<Vector2Int, Path> paths = new Dictionary<Vector2Int, Path>();
-
-                foreach (Vector2Int destination in destinations) {
-                    paths.Add(grid[destination.x, destination.y],
-                        CalculatePathBetweenHexagons(grid[x, z], grid[destination.x, destination.y]));
-                }
-
-                buildingPositions.TryAdd(grid[x, z], paths);
+                Vector2Int pos = new Vector2Int(x - z / 2, z) * baseDistance + offset;
+                Building building = new Building {
+                    location = pos,
+                    gridCoordinates = new Vector2Int(x, z),
+                    destinations = new Dictionary<Building, Path>()
+                };
+                buildings.Add(building);
+                grid[x, z] = building;
             }
         }
 
 
-        List<Building> buildings = new List<Building>();
-
-        foreach (Vector2Int location in buildingPositions.Keys) {
-            buildings.Add(new Building { location = location, destinations = new Dictionary<Building, Path>() });
-        }
-
-        foreach (Building building in buildings) {
-            foreach (Vector2Int destination in buildingPositions[building.location].Keys) {
-                if (buildings.Exists(b => b.location == destination)) {
-                    Building destBuilding = buildings.Find(b => b.location == destination);
-                    Path path = buildingPositions[building.location][destination];
-
-                    building.destinations.Add(destBuilding, path);
-                    destBuilding.destinations.Add(building, path);
-                }
-            }
-        }
+        GeneratePaths(grid, grid[buildingsPerAxis / 2, buildingsPerAxis / 2], buildingsPerAxis / 2 + 1);
 
         for (int i = buildings.Count - 1; i >= 0; i--) {
             if (buildings[i].destinations.Count == 0) {
@@ -84,6 +38,52 @@ public static class MapGenerator {
         }
 
         return buildings;
+    }
+
+    private static void GeneratePaths(Building[,] grid, Building building, int maxPathLength) {
+        List<Building> reachableBuildings = new List<Building>();
+
+        foreach (Vector2Int offset in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right }) {
+            if (building.gridCoordinates.x + offset.x < 0 ||
+                building.gridCoordinates.x + offset.x >= grid.GetLength(0) ||
+                building.gridCoordinates.y + offset.y < 0 ||
+                building.gridCoordinates.y + offset.y >= grid.GetLength(1)) {
+                continue;
+            }
+
+            Building destination = grid[building.gridCoordinates.x + offset.x, building.gridCoordinates.y + offset.y];
+            if (!reachableBuildings.Contains(destination) && !building.destinations.ContainsKey(destination)) {
+                reachableBuildings.Add(destination);
+            }
+        }
+
+        if (reachableBuildings.Count == 0 || maxPathLength <= 0) {
+            return;
+        }
+
+        List<Building> destinations = new List<Building>();
+
+        while (reachableBuildings.Count > 0) {
+            Building destination = reachableBuildings[Random.Range(0, reachableBuildings.Count - 1)];
+            reachableBuildings.Remove(destination);
+            destinations.Add(destination);
+
+            if (building.destinations.ContainsKey(destination)) {
+                continue;
+            }
+
+            Path path = CalculatePathBetweenHexagons(building.location, destination.location);
+            building.destinations.Add(destination, path);
+            destination.destinations.Add(building, path);
+
+            if (Random.value < 1.0f / maxPathLength) {
+                break;
+            }
+        }
+
+        foreach (Building destination in destinations) {
+            GeneratePaths(grid, destination, maxPathLength - 1);
+        }
     }
 
     private static Path CalculatePathBetweenHexagons(Vector2Int a, Vector2Int b) {
