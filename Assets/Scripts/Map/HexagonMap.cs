@@ -4,10 +4,11 @@ using UnityEngine;
 public class HexagonMap : MonoBehaviour {
 
     public GameObject hexagonPrefab;
-    public Vector3 heightMapScale;
     public int buildingsPerAxis;
     public int buildingsBaseDistance;
     public float buildingsAvgOffset;
+    
+    private static readonly Vector3 heightMapScale = new Vector3(0.12f, 3.0f, 0.12f);
 
     private void Start() {
         Generate();
@@ -83,7 +84,7 @@ public class HexagonMap : MonoBehaviour {
         }
     }
 
-    private float GetHeightAt(Vector2Int position) {
+    public static float GetHeightAt(Vector2Int position) {
         return heightMapScale.y * Mathf.PerlinNoise(position.x * heightMapScale.x, position.y * heightMapScale.z);
     }
 
