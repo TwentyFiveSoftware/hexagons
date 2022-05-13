@@ -2,7 +2,10 @@
 
 public class Hexagon : MonoBehaviour {
 
-    public void Init(float height) {
+    public Vector2Int coordinates;
+
+    public void Init(float height, Vector2Int hexCoords) {
+        this.coordinates = hexCoords;
         GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(height);
     }
 

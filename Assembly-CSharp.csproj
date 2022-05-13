@@ -43,8 +43,8 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\HexagonGrid.cs" />
      <Compile Include="Assets\Scripts\HexagonMesh.cs" />
-     <Compile Include="Assets\Scripts\Hexagon.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
+     <Compile Include="Assets\Scripts\Hexagon.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.2.14f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>
