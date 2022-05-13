@@ -96,9 +96,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24b88d32d587a6741b289d2ab2f5caa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates: {x: 0, y: 0}
   hexagonTypeData:
   - type: 0
-    material: {fileID: 2100000, guid: 40f6fae7612bc424ba8c547aed56a375, type: 2}
+    material: {fileID: 2100000, guid: 73fcd152f1d73374da4fbd96147697d2, type: 2}
   - type: 1
+    material: {fileID: 2100000, guid: 40f6fae7612bc424ba8c547aed56a375, type: 2}
+  - type: 2
     material: {fileID: 2100000, guid: d437ae1022985e24a8c1f3a6ab1541d7, type: 2}

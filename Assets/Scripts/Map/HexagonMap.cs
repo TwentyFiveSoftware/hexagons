@@ -24,10 +24,14 @@ public class HexagonMap : MonoBehaviour {
     }
 
     private void GenerateMap(List<Building> buildings) {
+        List<Vector2Int> generatedHexagonPositions = new List<Vector2Int>();
+
         List<Path> paths = new List<Path>();
 
         foreach (Building building in buildings) {
-            GenerateHexagonAt(building.location, HexagonType.BUILDING);
+            float height = 3.0f + GetHeightAt(building.location);
+            GenerateHexagonAt(building.location, HexagonType.BUILDING, height);
+            generatedHexagonPositions.Add(building.location);
 
             foreach (Path pathToDestination in building.destinations.Values) {
                 if (!paths.Contains(pathToDestination)) {
@@ -38,16 +42,33 @@ public class HexagonMap : MonoBehaviour {
 
         foreach (Path path in paths) {
             foreach (Vector2Int pathHexagon in path.hexagons) {
-                GenerateHexagonAt(pathHexagon, HexagonType.PATH);
+                float height = 1.0f + GetHeightAt(pathHexagon);
+                GenerateHexagonAt(pathHexagon, HexagonType.PATH, height);
+                generatedHexagonPositions.Add(pathHexagon);
+            }
+        }
+
+        for (int x = -buildingsBaseDistance / 2; x < buildingsPerAxis * buildingsBaseDistance; x++) {
+            for (int z = -buildingsBaseDistance / 2; z < buildingsPerAxis * buildingsBaseDistance; z++) {
+                Vector2Int position = new Vector2Int(x - z / 2, z);
+
+                if (!generatedHexagonPositions.Contains(position)) {
+                    float height = 0.5f + GetHeightAt(position);
+                    GenerateHexagonAt(position, HexagonType.DEFAULT, height);
+                }
             }
         }
     }
 
-    private void GenerateHexagonAt(Vector2Int position, HexagonType type) {
+    private float GetHeightAt(Vector2Int position) {
+        return heightMapScale.y * Mathf.PerlinNoise(position.x * heightMapScale.x, position.y * heightMapScale.z);
+    }
+
+    private void GenerateHexagonAt(Vector2Int position, HexagonType type, float height) {
         GameObject hexagon = Instantiate(hexagonPrefab, Hexagon.CalculateHexagonWorldPosition(position),
             Quaternion.Euler(Vector3.up * 90));
         hexagon.transform.SetParent(transform);
-        hexagon.GetComponent<Hexagon>().Init(1, type);
+        hexagon.GetComponent<Hexagon>().Init(height, type);
     }
 
 }

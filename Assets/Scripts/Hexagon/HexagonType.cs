@@ -2,8 +2,9 @@
 using UnityEngine;
 
 public enum HexagonType {
+    DEFAULT,
     BUILDING,
-    PATH
+    PATH,
 }
 
 [Serializable]
