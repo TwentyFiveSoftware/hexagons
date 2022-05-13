@@ -20,17 +20,38 @@ public class HexagonGrid : MonoBehaviour {
             DestroyImmediate(transform.GetChild(i).gameObject);
         }
 
-        List<Vector2Int> buildings = CalculateBuildingLocations(4, 10, 1);
+        List<Building> buildings = CalculateBuildingLocations(4, 10, 1);
+        GenerateMap(buildings);
     }
 
-    private void GenerateHexagonAt(int x, int z) {
-        Vector3 position = new Vector3(2.0f * INNER_RADIUS * x + INNER_RADIUS * z, 0, 1.5f * z);
+    private void GenerateHexagonAt(Vector2Int pos, HexagonType type) {
+        Vector3 position = new Vector3(2.0f * INNER_RADIUS * pos.x + INNER_RADIUS * pos.y, 0, 1.5f * pos.y);
         GameObject hexagon = Instantiate(hexagonPrefab, position, Quaternion.Euler(Vector3.up * 90));
         hexagon.transform.SetParent(transform);
-        hexagon.GetComponent<Hexagon>().Init(1, new Vector2Int(x, z));
+        hexagon.GetComponent<Hexagon>().Init(1, type, pos);
     }
 
-    private List<Vector2Int> CalculatePathBetweenHexagons(Vector2Int a, Vector2Int b) {
+    private void GenerateMap(List<Building> buildings) {
+        List<Path> paths = new List<Path>();
+
+        foreach (Building building in buildings) {
+            GenerateHexagonAt(building.location, HexagonType.BUILDING);
+
+            foreach (Path pathToDestination in building.destinations.Values) {
+                if (!paths.Contains(pathToDestination)) {
+                    paths.Add(pathToDestination);
+                }
+            }
+        }
+
+        foreach (Path path in paths) {
+            foreach (Vector2Int pathHexagon in path.hexagons) {
+                GenerateHexagonAt(pathHexagon, HexagonType.PATH);
+            }
+        }
+    }
+
+    private Path CalculatePathBetweenHexagons(Vector2Int a, Vector2Int b) {
         List<Vector2Int> sideOffsets = new List<Vector2Int> {
             new Vector2Int(1, 0),
             new Vector2Int(-1, 0),
@@ -65,15 +86,19 @@ public class HexagonGrid : MonoBehaviour {
             path.Add(bestNextHexagon);
         }
 
-        return path;
+        path.RemoveAt(0);
+        path.RemoveAt(path.Count - 1);
+
+        return new Path { hexagons = path };
     }
 
     private Vector3 CalculateHexagonWorldPosition(int x, int z) {
         return new Vector3(2.0f * INNER_RADIUS * x + INNER_RADIUS * z, 0, 1.5f * z);
     }
 
-    private List<Vector2Int> CalculateBuildingLocations(int a, int baseDistance, float avgOffset) {
-        List<Vector2Int> buildings = new List<Vector2Int>();
+    private List<Building> CalculateBuildingLocations(int a, int baseDistance, float avgOffset) {
+        Dictionary<Vector2Int, Dictionary<Vector2Int, Path>> buildingPositions =
+            new Dictionary<Vector2Int, Dictionary<Vector2Int, Path>>();
 
         Vector2Int[,] grid = new Vector2Int[a, a];
 
@@ -87,7 +112,6 @@ public class HexagonGrid : MonoBehaviour {
 
                 Vector2Int pos = new Vector2Int((x - z / 2), z) * baseDistance + offset;
                 grid[x, z] = pos;
-                // GenerateHexagonAt(pos.x, pos.y);
             }
         }
 
@@ -113,23 +137,52 @@ public class HexagonGrid : MonoBehaviour {
                     }
                 }
 
-                if (destinations.Count == 0) {
-                    continue;
-                }
+                Dictionary<Vector2Int, Path> paths = new Dictionary<Vector2Int, Path>();
 
                 foreach (Vector2Int destination in destinations) {
-                    List<Vector2Int> path =
-                        CalculatePathBetweenHexagons(grid[x, z], grid[destination.x, destination.y]);
-                    foreach (Vector2Int hexagon in path) {
-                        GenerateHexagonAt(hexagon.x, hexagon.y);
-                    }
+                    paths.Add(grid[destination.x, destination.y],
+                        CalculatePathBetweenHexagons(grid[x, z], grid[destination.x, destination.y]));
                 }
 
-                buildings.Add(grid[x, z]);
+                buildingPositions.Add(grid[x, z], paths);
+            }
+        }
+
+
+        List<Building> buildings = new List<Building>();
+
+        foreach (Vector2Int location in buildingPositions.Keys) {
+            buildings.Add(new Building { location = location, destinations = new Dictionary<Building, Path>() });
+        }
+
+        foreach (Building building in buildings) {
+            foreach (Vector2Int destination in buildingPositions[building.location].Keys) {
+                if (buildings.Exists(b => b.location == destination)) {
+                    Building destBuilding = buildings.Find(b => b.location == destination);
+                    Path path = buildingPositions[building.location][destination];
+
+                    building.destinations.Add(destBuilding, path);
+                    destBuilding.destinations.Add(building, path);
+                }
+            }
+        }
+
+        for (int i = buildings.Count - 1; i >= 0; i--) {
+            if (buildings[i].destinations.Count == 0) {
+                buildings.RemoveAt(i);
             }
         }
 
         return buildings;
+    }
+
+    class Path {
+        public List<Vector2Int> hexagons;
+    }
+
+    class Building {
+        public Vector2Int location;
+        public Dictionary<Building, Path> destinations;
     }
 
 }
