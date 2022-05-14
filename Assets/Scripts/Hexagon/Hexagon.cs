@@ -10,7 +10,7 @@ public class Hexagon : MonoBehaviour {
         GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(height);
 
         if (hexagonTypeData.Exists(data => data.type == type)) {
-            HexagonTypeData data = hexagonTypeData.Find((data) => data.type == type);
+            HexagonTypeData data = hexagonTypeData.Find(data => data.type == type);
             GetComponent<MeshRenderer>().sharedMaterial = data.material;
         } else {
             Debug.LogError("HexagonTypeData not found for type '" + type + "'");
@@ -29,6 +29,8 @@ public class Hexagon : MonoBehaviour {
 
         transform.localScale = new Vector3(transform.localScale.x * buildingSizeMultiplier, transform.localScale.y,
             transform.localScale.z * buildingSizeMultiplier);
+        
+        GetComponent<MeshRenderer>().sharedMaterial = new Material(GetComponent<MeshRenderer>().sharedMaterial);
     }
 
     public static Vector3 CalculateHexagonWorldPosition(Vector2Int position) {

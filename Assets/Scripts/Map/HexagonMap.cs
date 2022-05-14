@@ -7,7 +7,7 @@ public class HexagonMap : MonoBehaviour {
     public int buildingsPerAxis;
     public int buildingsBaseDistance;
     public float buildingsAvgOffset;
-    
+
     private static readonly Vector3 heightMapScale = new Vector3(0.12f, 3.0f, 0.12f);
 
     private void Start() {
@@ -19,9 +19,9 @@ public class HexagonMap : MonoBehaviour {
             DestroyImmediate(transform.GetChild(i).gameObject);
         }
 
-        List<Building> buildings =
+        GameController.instance.buildings =
             MapGenerator.GenerateBuildings(buildingsPerAxis, buildingsBaseDistance, buildingsAvgOffset);
-        GenerateMap(buildings);
+        GenerateMap(GameController.instance.buildings);
     }
 
     private void GenerateMap(List<Building> buildings) {

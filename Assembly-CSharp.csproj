@@ -41,18 +41,19 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Camera\BuildingSelector.cs" />
      <Compile Include="Assets\Scripts\Map\HexagonMap.cs" />
      <Compile Include="Assets\Scripts\Models\Path.cs" />
      <Compile Include="Assets\Scripts\Map\MapGenerator.cs" />
      <Compile Include="Assets\Scripts\Hexagon\HexagonMesh.cs" />
+     <Compile Include="Assets\Scripts\Hexagon\BuildingData.cs" />
      <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
      <Compile Include="Assets\Scripts\Hexagon\HexagonType.cs" />
      <Compile Include="Assets\Scripts\Hexagon\Hexagon.cs" />
      <Compile Include="Assets\Scripts\Models\Building.cs" />
-     <Compile Include="Assets\Scripts\Camera\BuildingSelector.cs" />
-     <Compile Include="Assets\Scripts\Game\GameController.cs" />
-     <Compile Include="Assets\Scripts\Hexagon\BuildingData.cs" />
      <Compile Include="Assets\Scripts\Enitity\Entity.cs" />
+     <Compile Include="Assets\Scripts\Game\GameController.cs" />
+     <Compile Include="Assets\Scripts\Map\PathFinder.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.2.14f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>
