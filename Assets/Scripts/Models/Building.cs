@@ -7,8 +7,17 @@ public class Building {
     public Dictionary<Building, Path> destinations;
 
     public int controllingPlayer = -1;
-    public int units = 10;
+    public int units;
     public int unitGeneration = 1;
+
+    public Building() {
+        units = Random.Range(1, 100);
+    }
+
+    public void SetAsStartingBuilding(int player) {
+        units = 10;
+        controllingPlayer = player;
+    }
 
     public void GenerateUnits() {
         if (controllingPlayer < 0) {
@@ -16,5 +25,18 @@ public class Building {
         }
 
         units += unitGeneration;
+    }
+
+    public void UnitsArrive(int arrivingUnits, int player) {
+        if (player == controllingPlayer) {
+            units += arrivingUnits;
+            return;
+        }
+
+        units -= arrivingUnits;
+        if (units < 0) {
+            controllingPlayer = player;
+            units = -units;
+        }
     }
 }

@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
                 return;
             }
 
-            startBuilding.controllingPlayer = player;
+            startBuilding.SetAsStartingBuilding(player);
         }
     }
 
@@ -76,7 +76,7 @@ public class GameController : MonoBehaviour {
 
         GameObject entityObject = Instantiate(entityPrefab, Entity.GetWorldPositionWithHeight(buildingFrom.location),
             Quaternion.identity);
-        entityObject.GetComponent<Entity>().Init(path, units);
+        entityObject.GetComponent<Entity>().Init(path, units, myPlayerId, buildingTo);
     }
 
     private void Awake() {

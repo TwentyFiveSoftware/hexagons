@@ -12,11 +12,11 @@ public class BuildingData : MonoBehaviour {
         defaultColor = currentColor;
 
         unitText = transform.GetChild(0).GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        transform.GetChild(0).gameObject.SetActive(true);
     }
 
     private void Start() {
         UpdateUnitText();
-        UpdateUnitTextVisible();
     }
 
     private void Update() {
@@ -32,7 +32,6 @@ public class BuildingData : MonoBehaviour {
             if (currentColor != defaultColor) {
                 GetComponent<MeshRenderer>().sharedMaterial.color = defaultColor;
                 currentColor = defaultColor;
-                UpdateUnitTextVisible();
             }
 
             return;
@@ -48,21 +47,15 @@ public class BuildingData : MonoBehaviour {
         if (currentColor != color) {
             currentColor = color;
             GetComponent<MeshRenderer>().sharedMaterial.color = color;
-            UpdateUnitTextVisible();
         }
     }
 
     private void UpdateUnitText() {
-        if (building == null || building.controllingPlayer < 0) {
+        if (building == null) {
             return;
         }
 
         unitText.text = building.units.ToString();
-    }
-
-    private void UpdateUnitTextVisible() {
-        bool visible = building != null && building.controllingPlayer >= 0;
-        transform.GetChild(0).gameObject.SetActive(visible);
     }
 
 }

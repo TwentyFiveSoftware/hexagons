@@ -49,6 +49,7 @@ MonoBehaviour:
   walkAnimationSpeed: 25
   walkAnimationY: 0.7
   maxUnitSize: 0.5
+  maxDisplayedUnits: 300
   unitPrefab: {fileID: 2895190904835648370, guid: cb48f817f1b9e094c84954effc92853a, type: 3}
 --- !u!1 &5625175326645580020
 GameObject:

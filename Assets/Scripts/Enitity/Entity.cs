@@ -7,23 +7,30 @@ public class Entity : MonoBehaviour {
     public float walkAnimationSpeed;
     public float walkAnimationY;
     public float maxUnitSize;
+    public int maxDisplayedUnits;
 
     public GameObject unitPrefab;
 
     private List<Vector3> remainingPath;
+    private Building destination;
+    private int player;
+    private int units;
 
-    public void Init(Path path, int units) {
+    public void Init(Path path, int unitCount, int controllingPlayer, Building destinationBuilding) {
         remainingPath = new List<Vector3>();
+        units = unitCount;
+        destination = destinationBuilding;
+        player = controllingPlayer;
 
         foreach (Vector2Int position in path.hexagons) {
             remainingPath.Add(GetWorldPositionWithHeight(position));
         }
 
-        GenerateUnits(units);
+        GenerateUnits(Mathf.Min(units, maxDisplayedUnits));
     }
 
-    private void GenerateUnits(int units) {
-        for (int i = 0; i < units; ++i) {
+    private void GenerateUnits(int unitCount) {
+        for (int i = 0; i < unitCount; ++i) {
             float size = maxUnitSize * Mathf.Pow(2, -Random.Range(0.0f, 2.0f));
             Vector3 position = new Vector3(Random.Range(-0.5f, 0.5f), size / 2.0f, Random.Range(-0.5f, 0.5f));
 
@@ -41,6 +48,7 @@ public class Entity : MonoBehaviour {
 
     private void Update() {
         if (remainingPath.Count == 0) {
+            destination.UnitsArrive(units, player);
             Destroy(gameObject);
             return;
         }
