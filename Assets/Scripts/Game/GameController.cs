@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour {
     public List<Color> playerColors;
     public int playerCount;
     public int unitGenerationTicks;
+    public int myPlayerId = 0;
 
     public static GameController instance { get; private set; }
     public List<Building> buildings = new();
@@ -59,6 +60,10 @@ public class GameController : MonoBehaviour {
     public void HandleBuildingDragAndDrop(Building buildingFrom, Building buildingTo) {
         Debug.Log("Drag from building " + buildingFrom.location + " to " + buildingTo.location);
 
+        if (buildingFrom.controllingPlayer != myPlayerId || buildingFrom.units < 2) {
+            return;
+        }
+
         Path path = PathFinder.FindPath(buildingFrom, buildingTo);
 
         if (path == null) {
@@ -66,9 +71,12 @@ public class GameController : MonoBehaviour {
             return;
         }
 
+        int units = buildingFrom.units / 2;
+        buildingFrom.units -= units;
+
         GameObject entityObject = Instantiate(entityPrefab, Entity.GetWorldPositionWithHeight(buildingFrom.location),
             Quaternion.identity);
-        entityObject.GetComponent<Entity>().Init(path);
+        entityObject.GetComponent<Entity>().Init(path, units);
     }
 
     private void Awake() {
