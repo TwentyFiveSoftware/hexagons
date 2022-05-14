@@ -8,7 +8,7 @@ public class HexagonMap : MonoBehaviour {
     public int buildingsBaseDistance;
     public float buildingsAvgOffset;
 
-    private static readonly Vector3 heightMapScale = new Vector3(0.12f, 3.0f, 0.12f);
+    private static readonly Vector3 heightMapScale = new(0.12f, 3.0f, 0.12f);
 
     private void Start() {
         Generate();
@@ -31,7 +31,7 @@ public class HexagonMap : MonoBehaviour {
         List<Path> paths = new List<Path>();
 
         foreach (Building building in buildings) {
-            float height = 3.0f + GetHeightAt(building.location);
+            float height = 1.5f + GetHeightAt(building.location);
             GenerateHexagonAt(building.location, HexagonType.BUILDING, height).InitBuilding(building);
 
             generatedHexagonPositions.Add(building.location);

@@ -8,9 +8,12 @@ public class GameController : MonoBehaviour {
     public GameObject entityPrefab;
     public List<Color> playerColors;
     public int playerCount;
+    public int unitGenerationTicks;
 
     public static GameController instance { get; private set; }
     public List<Building> buildings = new();
+
+    private int ticksSinceLastUnitGeneration = 0;
 
     public void StartGame() {
         if (playerCount < 2 || playerCount > playerColors.Count) {
@@ -22,7 +25,7 @@ public class GameController : MonoBehaviour {
             Building startBuilding = DetermineStartingPosition();
 
             if (startBuilding == null) {
-                Debug.Log("Unable to determine suitable starting position for player " + player);
+                Debug.LogError("Unable to determine suitable starting position for player " + player);
                 return;
             }
 
@@ -73,6 +76,18 @@ public class GameController : MonoBehaviour {
             Destroy(this);
         } else {
             instance = this;
+        }
+    }
+
+    private void FixedUpdate() {
+        ticksSinceLastUnitGeneration++;
+
+        if (ticksSinceLastUnitGeneration >= unitGenerationTicks) {
+            ticksSinceLastUnitGeneration = 0;
+
+            foreach (Building building in buildings) {
+                building.GenerateUnits();
+            }
         }
     }
 }

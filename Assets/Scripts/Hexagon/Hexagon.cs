@@ -5,8 +5,12 @@ public class Hexagon : MonoBehaviour {
 
     public List<HexagonTypeData> hexagonTypeData;
     public float buildingSizeMultiplier;
+    public float unitTextYOffset;
+
+    private float hexagonHeight;
 
     public void Init(float height, HexagonType type) {
+        hexagonHeight = height;
         GetComponent<MeshFilter>().mesh = HexagonMesh.GenerateHexagonMesh(height);
 
         if (hexagonTypeData.Exists(data => data.type == type)) {
@@ -27,10 +31,10 @@ public class Hexagon : MonoBehaviour {
         meshCollider.convex = true;
         meshCollider.isTrigger = true;
 
-        transform.localScale = new Vector3(transform.localScale.x * buildingSizeMultiplier, transform.localScale.y,
-            transform.localScale.z * buildingSizeMultiplier);
-        
+        transform.localScale *= buildingSizeMultiplier;
+
         GetComponent<MeshRenderer>().sharedMaterial = new Material(GetComponent<MeshRenderer>().sharedMaterial);
+        transform.GetChild(0).localPosition = Vector3.up * (hexagonHeight + unitTextYOffset);
     }
 
     public static Vector3 CalculateHexagonWorldPosition(Vector2Int position) {
