@@ -5,6 +5,13 @@ public class CameraController : MonoBehaviour {
     public float panSensitivity = 0.3f;
     public float tiltSensitivity = 0.2f;
     public float moveSensitivity = 1.0f;
+    public float zoomSensitivity = 3.0f;
+
+    public float maxPanArea = 100.0f;
+    public float minCameraTilt = 5.0f;
+    public float maxCameraTilt = 85.0f;
+    public float minCameraZoom = 5.0f;
+    public float maxCameraZoom = 120.0f;
 
     private Transform cameraWorldPoint;
     private Camera cameraComponent;
@@ -28,9 +35,18 @@ public class CameraController : MonoBehaviour {
 
         if (Input.GetMouseButton(2)) {
             Vector3 delta = previousMouseScreenPosition - mouseScreenPosition;
+            if (delta.magnitude > 100) {
+                delta = Vector3.zero;
+            }
 
             cameraWorldPoint.Rotate(Vector3.up, -delta.x * panSensitivity, Space.World);
             cameraWorldPoint.Rotate(cameraWorldPoint.right, delta.y * tiltSensitivity, Space.World);
+
+            Vector3 angles = cameraWorldPoint.rotation.eulerAngles;
+            angles.x = Mathf.Clamp(angles.x, minCameraTilt, maxCameraTilt);
+            angles.y %= 360;
+            angles.z = 0;
+            cameraWorldPoint.rotation = Quaternion.Euler(angles);
         }
 
         previousMouseScreenPosition = mouseScreenPosition;
@@ -45,8 +61,13 @@ public class CameraController : MonoBehaviour {
             if (Input.GetMouseButton(1)) {
                 Vector3 delta = previousMouseWorldPoint - worldPoint;
                 delta.y = 0;
-                cameraWorldPoint.Translate(delta * moveSensitivity, Space.World);
                 worldPoint += delta;
+
+                cameraWorldPoint.Translate(delta * moveSensitivity, Space.World);
+
+                cameraWorldPoint.position =
+                    new Vector3(Mathf.Clamp(cameraWorldPoint.position.x, -maxPanArea, maxPanArea), 0,
+                        Mathf.Clamp(cameraWorldPoint.position.z, -maxPanArea, maxPanArea));
             }
 
             previousMouseWorldPoint = worldPoint;
@@ -54,8 +75,9 @@ public class CameraController : MonoBehaviour {
     }
 
     private void UpdateCameraZoom() {
-        Transform cameraTransform = cameraComponent.transform;
-        cameraTransform.localPosition += Vector3.forward * Input.mouseScrollDelta.y;
+        float zoom = -cameraComponent.transform.localPosition.z - Input.mouseScrollDelta.y * zoomSensitivity;
+        zoom = Mathf.Clamp(zoom, minCameraZoom, maxCameraZoom);
+        cameraComponent.transform.localPosition = Vector3.forward * -zoom;
     }
 
 }
