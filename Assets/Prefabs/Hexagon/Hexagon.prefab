@@ -99,11 +99,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexagonTypeData:
   - type: 0
-    material: {fileID: 2100000, guid: 73fcd152f1d73374da4fbd96147697d2, type: 2}
+    materials:
+    - {fileID: 2100000, guid: 73fcd152f1d73374da4fbd96147697d2, type: 2}
+    - {fileID: 2100000, guid: 1dc94d68b1df6ff44b7f44ae76daaf10, type: 2}
+    - {fileID: 2100000, guid: a845bab0a3c0bf24b8426cba0a031563, type: 2}
+    - {fileID: 2100000, guid: b7db33223311e114faefb0d9e73c9d20, type: 2}
+    - {fileID: 2100000, guid: 6bfcdcdefd10ebf4392fc8a6d6c413eb, type: 2}
   - type: 1
-    material: {fileID: 2100000, guid: 40f6fae7612bc424ba8c547aed56a375, type: 2}
+    materials:
+    - {fileID: 2100000, guid: 40f6fae7612bc424ba8c547aed56a375, type: 2}
   - type: 2
-    material: {fileID: 2100000, guid: d437ae1022985e24a8c1f3a6ab1541d7, type: 2}
+    materials:
+    - {fileID: 2100000, guid: d437ae1022985e24a8c1f3a6ab1541d7, type: 2}
+    - {fileID: 2100000, guid: 483bd5474ee1c824ba9e3b32fd25806d, type: 2}
+    - {fileID: 2100000, guid: e48f5e5f69aeb2143809781a37d52f27, type: 2}
+    - {fileID: 2100000, guid: 9f6af64a6edc29246a7541cbe69c2228, type: 2}
+    - {fileID: 2100000, guid: 7ec79923be5504540a093d2ead16de4c, type: 2}
   buildingSizeMultiplier: 1.8
   unitTextYOffset: 0.2
 --- !u!1 &2748126167337497117

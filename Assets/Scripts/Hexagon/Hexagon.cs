@@ -15,7 +15,7 @@ public class Hexagon : MonoBehaviour {
 
         if (hexagonTypeData.Exists(data => data.type == type)) {
             HexagonTypeData data = hexagonTypeData.Find(data => data.type == type);
-            GetComponent<MeshRenderer>().sharedMaterial = data.material;
+            GetComponent<MeshRenderer>().sharedMaterial = data.materials[Random.Range(0, data.materials.Count)];
         } else {
             Debug.LogError("HexagonTypeData not found for type '" + type + "'");
         }

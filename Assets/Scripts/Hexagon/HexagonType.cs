@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum HexagonType {
@@ -10,5 +11,5 @@ public enum HexagonType {
 [Serializable]
 public struct HexagonTypeData {
     public HexagonType type;
-    public Material material;
+    public List<Material> materials;
 }
