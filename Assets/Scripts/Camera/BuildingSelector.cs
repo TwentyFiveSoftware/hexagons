@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class BuildingSelector : MonoBehaviour {
 
-    public GameController gameController;
-
     private Camera cameraComponent;
     private GameObject selectedBuildingA;
 
@@ -42,7 +40,7 @@ public class BuildingSelector : MonoBehaviour {
                 Building buildingFrom = selectedBuildingA.GetComponent<BuildingData>().building;
                 Building buildingTo = hit.transform.gameObject.GetComponent<BuildingData>().building;
 
-                gameController.HandleBuildingDragAndDrop(buildingFrom, buildingTo);
+                GameController.instance.HandleBuildingDragAndDrop(buildingFrom, buildingTo);
             }
         }
 

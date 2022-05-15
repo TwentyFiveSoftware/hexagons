@@ -87,6 +87,11 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    private void Start() {
+        GetComponent<HexagonMap>().Generate();
+        StartGame();
+    }
+
     private void FixedUpdate() {
         ticksSinceLastUnitGeneration++;
 

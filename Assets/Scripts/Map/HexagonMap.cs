@@ -10,10 +10,6 @@ public class HexagonMap : MonoBehaviour {
 
     private static readonly Vector3 heightMapScale = new(0.12f, 3.0f, 0.12f);
 
-    private void Start() {
-        Generate();
-    }
-
     public void Generate() {
         for (int i = transform.childCount - 1; i >= 0; --i) {
             DestroyImmediate(transform.GetChild(i).gameObject);
