@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BuildingSelector : MonoBehaviour {
 
     private Camera cameraComponent;
-    private GameObject selectedBuildingA;
+    private readonly List<GameObject> selectedSrcBuildings = new();
 
     private void Start() {
         cameraComponent = GetComponent<Camera>();
@@ -11,6 +13,10 @@ public class BuildingSelector : MonoBehaviour {
 
     private void Update() {
         if (Input.GetMouseButtonDown(0)) {
+            MouseDown();
+        }
+
+        if (Input.GetMouseButton(0) && selectedSrcBuildings.Count > 0) {
             MouseDown();
         }
 
@@ -22,29 +28,62 @@ public class BuildingSelector : MonoBehaviour {
     private void MouseDown() {
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
-            if (hit.transform.gameObject.CompareTag("BUILDING")) {
-                selectedBuildingA = hit.transform.gameObject;
+            GameObject obj = hit.transform.gameObject;
+            if (!obj.CompareTag("BUILDING")) {
+                return;
             }
+
+            if (selectedSrcBuildings.Contains(obj)) {
+                return;
+            }
+
+            if (obj.GetComponent<BuildingData>().building.controllingPlayer != GameController.instance.myPlayerId) {
+                return;
+            }
+
+            selectedSrcBuildings.Add(obj);
+            SetBuildingSelected(obj, true);
         }
     }
 
     private void MouseUp() {
-        if (selectedBuildingA == null) {
+        if (selectedSrcBuildings.Count == 0) {
             return;
         }
 
         Ray ray = cameraComponent.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
-            if (!hit.transform.gameObject.Equals(selectedBuildingA) &&
-                hit.transform.gameObject.CompareTag("BUILDING")) {
-                Building buildingFrom = selectedBuildingA.GetComponent<BuildingData>().building;
-                Building buildingTo = hit.transform.gameObject.GetComponent<BuildingData>().building;
+            GameObject obj = hit.transform.gameObject;
 
-                GameController.instance.HandleBuildingDragAndDrop(buildingFrom, buildingTo);
+            if (!obj.CompareTag("BUILDING")) {
+                UnselectBuildings();
+                return;
             }
+
+            if (selectedSrcBuildings.Contains(obj)) {
+                SetBuildingSelected(obj, false);
+                selectedSrcBuildings.Remove(obj);
+            }
+
+            List<Building> srcBuildings = selectedSrcBuildings
+                                          .Select(building => building.GetComponent<BuildingData>().building).ToList();
+            Building dstBuilding = hit.transform.gameObject.GetComponent<BuildingData>().building;
+            GameController.instance.HandleBuildingDragAndDrop(srcBuildings, dstBuilding);
         }
 
-        selectedBuildingA = null;
+        UnselectBuildings();
+    }
+
+    private void UnselectBuildings() {
+        foreach (GameObject building in selectedSrcBuildings) {
+            SetBuildingSelected(building, false);
+        }
+
+        selectedSrcBuildings.Clear();
+    }
+
+    private void SetBuildingSelected(GameObject building, bool selected) {
+        building.transform.GetChild(1).gameObject.SetActive(selected);
     }
 
 }

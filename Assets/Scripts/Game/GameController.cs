@@ -57,26 +57,25 @@ public class GameController : MonoBehaviour {
         return null;
     }
 
-    public void HandleBuildingDragAndDrop(Building buildingFrom, Building buildingTo) {
-        Debug.Log("Drag from building " + buildingFrom.location + " to " + buildingTo.location);
+    public void HandleBuildingDragAndDrop(List<Building> srcBuildings, Building dstBuilding) {
+        srcBuildings = srcBuildings.Where(building => building.controllingPlayer == myPlayerId && building.units >= 2)
+                                   .ToList();
 
-        if (buildingFrom.controllingPlayer != myPlayerId || buildingFrom.units < 2) {
-            return;
+        foreach (Building srcBuilding in srcBuildings) {
+            Path path = PathFinder.FindPath(srcBuilding, dstBuilding);
+
+            if (path == null) {
+                Debug.LogError("No path found!");
+                return;
+            }
+
+            int units = srcBuilding.units / 2;
+            srcBuilding.units -= units;
+
+            GameObject entityObject = Instantiate(entityPrefab, Entity.GetWorldPositionWithHeight(srcBuilding.location),
+                Quaternion.identity);
+            entityObject.GetComponent<Entity>().Init(path, units, myPlayerId, dstBuilding);
         }
-
-        Path path = PathFinder.FindPath(buildingFrom, buildingTo);
-
-        if (path == null) {
-            Debug.LogError("No path found!");
-            return;
-        }
-
-        int units = buildingFrom.units / 2;
-        buildingFrom.units -= units;
-
-        GameObject entityObject = Instantiate(entityPrefab, Entity.GetWorldPositionWithHeight(buildingFrom.location),
-            Quaternion.identity);
-        entityObject.GetComponent<Entity>().Init(path, units, myPlayerId, buildingTo);
     }
 
     private void Awake() {

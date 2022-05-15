@@ -33,8 +33,13 @@ public class Hexagon : MonoBehaviour {
 
         transform.localScale *= buildingSizeMultiplier;
 
-        GetComponent<MeshRenderer>().sharedMaterial = new Material(GetComponent<MeshRenderer>().sharedMaterial);
+        Material material = new Material(GetComponent<MeshRenderer>().sharedMaterial);
+        GetComponent<MeshRenderer>().sharedMaterial = material;
         transform.GetChild(0).localPosition = Vector3.up * (hexagonHeight + unitTextYOffset);
+
+        transform.GetChild(1).gameObject.SetActive(true);
+        GetComponentInChildren<BuildingRing>()
+            .Init((1.5f + HexagonMap.GetHeightAt(building.location)) / transform.localScale.y, material);
     }
 
     public static Vector3 CalculateHexagonWorldPosition(Vector2Int position) {
