@@ -26,17 +26,26 @@ public class Entity : MonoBehaviour {
             remainingPath.Add(GetWorldPositionWithHeight(position));
         }
 
-        GenerateUnits(Mathf.Min(units, maxDisplayedUnits));
+        GenerateUnits(Mathf.Min(units, maxDisplayedUnits), controllingPlayer);
     }
 
-    private void GenerateUnits(int unitCount) {
+    private void GenerateUnits(int unitCount, int controllingPlayer) {
+        GameObject temp = Instantiate(unitPrefab, Vector3.zero, Quaternion.identity, transform);
+        Material material = new Material(temp.GetComponent<MeshRenderer>().sharedMaterial) {
+            color = GameController.instance.playerColors[controllingPlayer]
+        };
+        Destroy(temp);
+
+
         for (int i = 0; i < unitCount; ++i) {
             float size = maxUnitSize * Mathf.Pow(2, -Random.Range(0.0f, 2.0f));
             Vector3 position = new Vector3(Random.Range(-0.5f, 0.5f), size / 2.0f, Random.Range(-0.5f, 0.5f));
 
-            GameObject obj = Instantiate(unitPrefab, Vector3.zero, Quaternion.identity, transform.GetChild(0));
+            GameObject obj = Instantiate(unitPrefab, Vector3.zero, Quaternion.identity, transform);
             obj.transform.localPosition = position;
             obj.transform.localScale = Vector3.one * size;
+
+            obj.GetComponent<MeshRenderer>().sharedMaterial = material;
         }
     }
 
@@ -61,11 +70,10 @@ public class Entity : MonoBehaviour {
 
         transform.Translate(delta.normalized * (Time.deltaTime * speed));
 
-        for (int i = 0; i < transform.GetChild(0).childCount; ++i) {
-            float sinOffset = Time.time * walkAnimationSpeed +
-                              2.0f * i * Mathf.PI / transform.GetChild(0).childCount * i;
+        for (int i = 0; i < transform.childCount; ++i) {
+            float sinOffset = Time.time * walkAnimationSpeed + 2.0f * i * Mathf.PI / transform.childCount * i;
             float yDelta = (1.0f + Mathf.Sin(sinOffset)) * 0.5f * Mathf.PerlinNoise(i * 0.2f, 0) * walkAnimationY;
-            Transform unit = transform.GetChild(0).GetChild(i);
+            Transform unit = transform.GetChild(i);
             unit.localPosition =
                 new Vector3(unit.localPosition.x, unit.localScale.y * 0.5f + yDelta, unit.localPosition.z);
         }
