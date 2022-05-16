@@ -5,7 +5,7 @@ using UnityEngine;
 public class BuildingSelector : MonoBehaviour {
 
     private Camera cameraComponent;
-    private readonly List<GameObject> selectedSrcBuildings = new();
+    private List<GameObject> selectedSrcBuildings = new();
     private GameObject currentlyHighlightedObj;
 
     private void Start() {
@@ -49,6 +49,16 @@ public class BuildingSelector : MonoBehaviour {
         } else {
             UnhighlightObject();
         }
+
+        if (selectedSrcBuildings.Count > 0) {
+            for (int i = selectedSrcBuildings.Count - 1; i >= 0; i--) {
+                if (selectedSrcBuildings[i].GetComponent<BuildingData>().building.controllingPlayer !=
+                    GameController.instance.myPlayerId) {
+                    SetBuildingSelected(selectedSrcBuildings[i], false);
+                    selectedSrcBuildings.RemoveAt(i);
+                }
+            }
+        }
     }
 
     private void MouseUp() {
@@ -63,7 +73,7 @@ public class BuildingSelector : MonoBehaviour {
             GameObject obj = hit.transform.gameObject;
 
             if (!obj.CompareTag("BUILDING")) {
-                UnselectBuildings();
+                DeselectBuildings();
                 return;
             }
 
@@ -78,10 +88,10 @@ public class BuildingSelector : MonoBehaviour {
             GameController.instance.InitiateUnitMove(srcBuildings, dstBuilding, GameController.instance.myPlayerId);
         }
 
-        UnselectBuildings();
+        DeselectBuildings();
     }
 
-    private void UnselectBuildings() {
+    private void DeselectBuildings() {
         foreach (GameObject building in selectedSrcBuildings) {
             SetBuildingSelected(building, false);
         }
