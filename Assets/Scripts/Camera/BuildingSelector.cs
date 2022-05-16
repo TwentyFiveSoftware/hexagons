@@ -6,6 +6,7 @@ public class BuildingSelector : MonoBehaviour {
 
     private Camera cameraComponent;
     private readonly List<GameObject> selectedSrcBuildings = new();
+    private GameObject currentlyHighlightedObj;
 
     private void Start() {
         cameraComponent = GetComponent<Camera>();
@@ -33,6 +34,8 @@ public class BuildingSelector : MonoBehaviour {
                 return;
             }
 
+            HighlightObject(obj);
+
             if (selectedSrcBuildings.Contains(obj)) {
                 return;
             }
@@ -43,10 +46,14 @@ public class BuildingSelector : MonoBehaviour {
 
             selectedSrcBuildings.Add(obj);
             SetBuildingSelected(obj, true);
+        } else {
+            UnhighlightObject();
         }
     }
 
     private void MouseUp() {
+        UnhighlightObject();
+
         if (selectedSrcBuildings.Count == 0) {
             return;
         }
@@ -84,6 +91,31 @@ public class BuildingSelector : MonoBehaviour {
 
     private void SetBuildingSelected(GameObject building, bool selected) {
         building.transform.GetChild(1).gameObject.SetActive(selected);
+    }
+
+    private void HighlightObject(GameObject obj) {
+        UnhighlightObject();
+
+        if (selectedSrcBuildings.Count == 0 ||
+            (selectedSrcBuildings.Count == 1 && selectedSrcBuildings.Contains(obj))) {
+            return;
+        }
+
+        currentlyHighlightedObj = obj;
+
+        BuildingArrow.ShowArrowAbove(obj);
+    }
+
+    private void UnhighlightObject() {
+        if (currentlyHighlightedObj == null) {
+            return;
+        }
+
+        foreach (LineRenderer line in currentlyHighlightedObj.GetComponentsInChildren<LineRenderer>()) {
+            Destroy(line.gameObject);
+        }
+
+        currentlyHighlightedObj = null;
     }
 
 }
