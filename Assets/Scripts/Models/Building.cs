@@ -11,7 +11,7 @@ public class Building {
     public int unitGeneration = 1;
 
     public Building() {
-        units = Random.Range(1, 100);
+        units = Random.Range(1, 50);
     }
 
     public void SetAsStartingBuilding(int player) {

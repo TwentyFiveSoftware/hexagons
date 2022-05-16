@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour {
     public List<Building> buildings = new();
 
     private int ticksSinceLastUnitGeneration = 0;
+    private List<AIController> aiPlayers = new();
 
     public void StartGame() {
         if (playerCount < 2 || playerCount > playerColors.Count) {
@@ -31,6 +32,10 @@ public class GameController : MonoBehaviour {
             }
 
             startBuilding.SetAsStartingBuilding(player);
+
+            if (player != myPlayerId) {
+                aiPlayers.Add(new AIController(player));
+            }
         }
     }
 
@@ -57,8 +62,8 @@ public class GameController : MonoBehaviour {
         return null;
     }
 
-    public void HandleBuildingDragAndDrop(List<Building> srcBuildings, Building dstBuilding) {
-        srcBuildings = srcBuildings.Where(building => building.controllingPlayer == myPlayerId && building.units >= 2)
+    public void InitiateUnitMove(List<Building> srcBuildings, Building dstBuilding, int playerId) {
+        srcBuildings = srcBuildings.Where(building => building.controllingPlayer == playerId && building.units >= 2)
                                    .ToList();
 
         foreach (Building srcBuilding in srcBuildings) {
@@ -74,7 +79,7 @@ public class GameController : MonoBehaviour {
 
             GameObject entityObject = Instantiate(entityPrefab, Entity.GetWorldPositionWithHeight(srcBuilding.location),
                 Quaternion.identity);
-            entityObject.GetComponent<Entity>().Init(path, units, myPlayerId, dstBuilding);
+            entityObject.GetComponent<Entity>().Init(path, units, playerId, dstBuilding);
         }
     }
 
@@ -99,6 +104,10 @@ public class GameController : MonoBehaviour {
 
             foreach (Building building in buildings) {
                 building.GenerateUnits();
+            }
+
+            foreach (AIController ai in aiPlayers) {
+                ai.Update();
             }
         }
     }

@@ -57,6 +57,7 @@
      <Compile Include="Assets\Scripts\Enitity\Entity.cs" />
      <Compile Include="Assets\Scripts\Game\GameController.cs" />
      <Compile Include="Assets\Scripts\Indicators\BuildingArrow.cs" />
+     <Compile Include="Assets\Scripts\Game\AIController.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

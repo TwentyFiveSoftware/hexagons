@@ -75,7 +75,7 @@ public class BuildingSelector : MonoBehaviour {
             List<Building> srcBuildings = selectedSrcBuildings
                                           .Select(building => building.GetComponent<BuildingData>().building).ToList();
             Building dstBuilding = hit.transform.gameObject.GetComponent<BuildingData>().building;
-            GameController.instance.HandleBuildingDragAndDrop(srcBuildings, dstBuilding);
+            GameController.instance.InitiateUnitMove(srcBuildings, dstBuilding, GameController.instance.myPlayerId);
         }
 
         UnselectBuildings();
