@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour {
     private int ticksSinceLastUnitGeneration = 0;
     private List<AIController> aiPlayers = new();
 
-    public void StartGame() {
+    private void StartGame() {
         if (playerCount < 2 || playerCount > playerColors.Count) {
             Debug.LogError("Invalid player count!");
             return;
@@ -83,6 +83,14 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    private void CheckForGameOver() {
+        if (aiPlayers.All(ai => ai.IsEliminated())) {
+            GetComponent<PlayAgainScreenHandler>().GameWon();
+        } else if (buildings.All(building => building.controllingPlayer != myPlayerId)) {
+            GetComponent<PlayAgainScreenHandler>().GameOver();
+        }
+    }
+
     private void Awake() {
         if (instance != null && instance != this) {
             Destroy(this);
@@ -109,6 +117,8 @@ public class GameController : MonoBehaviour {
             foreach (AIController ai in aiPlayers) {
                 ai.Update();
             }
+
+            CheckForGameOver();
         }
     }
 }
