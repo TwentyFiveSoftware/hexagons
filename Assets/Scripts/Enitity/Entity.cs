@@ -77,6 +77,10 @@ public class Entity : MonoBehaviour {
             unit.localPosition =
                 new Vector3(unit.localPosition.x, unit.localScale.y * 0.5f + yDelta, unit.localPosition.z);
         }
+
+        if (GameController.instance.IsGameOver()) {
+            Destroy(gameObject);
+        }
     }
 
 }

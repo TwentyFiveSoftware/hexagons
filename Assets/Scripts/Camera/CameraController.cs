@@ -25,6 +25,10 @@ public class CameraController : MonoBehaviour {
     }
 
     private void Update() {
+        if (GameController.instance.IsGameOver()) {
+            return;
+        }
+
         UpdateCameraRotation();
         UpdateCameraTranslation();
         UpdateCameraZoom();

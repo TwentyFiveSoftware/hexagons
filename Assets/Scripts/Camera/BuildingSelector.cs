@@ -5,14 +5,20 @@ using UnityEngine;
 public class BuildingSelector : MonoBehaviour {
 
     private Camera cameraComponent;
-    private List<GameObject> selectedSrcBuildings = new();
-    private GameObject currentlyHighlightedObj;
+    private readonly List<GameObject> selectedSrcBuildings = new();
+    private GameObject currentlyHighlightedBuilding;
 
     private void Start() {
         cameraComponent = GetComponent<Camera>();
     }
 
     private void Update() {
+        if (GameController.instance.IsGameOver()) {
+            DeselectBuildings();
+            UnhighlightBuilding();
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0)) {
             MouseDown();
         }
@@ -34,7 +40,7 @@ public class BuildingSelector : MonoBehaviour {
                 return;
             }
 
-            HighlightObject(obj);
+            HighlightBuilding(obj);
 
             if (selectedSrcBuildings.Contains(obj)) {
                 return;
@@ -47,7 +53,7 @@ public class BuildingSelector : MonoBehaviour {
             selectedSrcBuildings.Add(obj);
             SetBuildingSelected(obj, true);
         } else {
-            UnhighlightObject();
+            UnhighlightBuilding();
         }
 
         if (selectedSrcBuildings.Count > 0) {
@@ -62,7 +68,7 @@ public class BuildingSelector : MonoBehaviour {
     }
 
     private void MouseUp() {
-        UnhighlightObject();
+        UnhighlightBuilding();
 
         if (selectedSrcBuildings.Count == 0) {
             return;
@@ -103,29 +109,29 @@ public class BuildingSelector : MonoBehaviour {
         building.transform.GetChild(1).gameObject.SetActive(selected);
     }
 
-    private void HighlightObject(GameObject obj) {
-        UnhighlightObject();
+    private void HighlightBuilding(GameObject obj) {
+        UnhighlightBuilding();
 
         if (selectedSrcBuildings.Count == 0 ||
             (selectedSrcBuildings.Count == 1 && selectedSrcBuildings.Contains(obj))) {
             return;
         }
 
-        currentlyHighlightedObj = obj;
+        currentlyHighlightedBuilding = obj;
 
         BuildingArrow.ShowArrowAbove(obj);
     }
 
-    private void UnhighlightObject() {
-        if (currentlyHighlightedObj == null) {
+    private void UnhighlightBuilding() {
+        if (!currentlyHighlightedBuilding) {
             return;
         }
 
-        foreach (LineRenderer line in currentlyHighlightedObj.GetComponentsInChildren<LineRenderer>()) {
+        foreach (LineRenderer line in currentlyHighlightedBuilding.GetComponentsInChildren<LineRenderer>()) {
             Destroy(line.gameObject);
         }
 
-        currentlyHighlightedObj = null;
+        currentlyHighlightedBuilding = null;
     }
 
 }

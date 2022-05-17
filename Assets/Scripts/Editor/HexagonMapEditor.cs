@@ -7,8 +7,11 @@ public class HexagonMapEditor : Editor {
         base.OnInspectorGUI();
 
         if (GUILayout.Button("Generate")) {
-            HexagonMap map = (HexagonMap)target;
-            map.Generate();
+            ((HexagonMap)target).Generate();
+        }
+
+        if (GUILayout.Button("Destroy")) {
+            ((HexagonMap)target).DestroyMap();
         }
     }
 }

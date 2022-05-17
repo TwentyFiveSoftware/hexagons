@@ -7,8 +7,9 @@ public class PlayAgainScreenHandler : MonoBehaviour {
 
     public void OnPlayAgainButtonClicked() {
         gameOverAnimator.SetTrigger("PlayAgain");
+        GameController.instance.StartGame();
     }
-    
+
     public void GameOver() {
         gameOverText.text = "GAME OVER";
         gameOverAnimator.SetTrigger("GameOver");

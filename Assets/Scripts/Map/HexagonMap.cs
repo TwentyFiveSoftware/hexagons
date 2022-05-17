@@ -11,8 +11,11 @@ public class HexagonMap : MonoBehaviour {
     private static readonly Vector3 heightMapScale = new(0.12f, 3.0f, 0.12f);
 
     public void Generate() {
-        for (int i = transform.childCount - 1; i >= 0; --i) {
-            DestroyImmediate(transform.GetChild(i).gameObject);
+        DestroyMap();
+        
+        if (!GameController.instance) {
+            GenerateMap(MapGenerator.GenerateBuildings(buildingsPerAxis, buildingsBaseDistance, buildingsAvgOffset));
+            return;
         }
 
         GameController.instance.buildings =
@@ -20,6 +23,12 @@ public class HexagonMap : MonoBehaviour {
         GenerateMap(GameController.instance.buildings);
     }
 
+    public void DestroyMap() {
+        for (int i = transform.childCount - 1; i >= 0; --i) {
+            DestroyImmediate(transform.GetChild(i).gameObject);
+        }
+    }
+    
     private void GenerateMap(List<Building> buildings) {
         List<Vector2Int> generatedHexagonPositions = new List<Vector2Int>();
         List<Vector2Int> mapOutline = new List<Vector2Int>();

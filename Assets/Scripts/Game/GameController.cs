@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class GameController : MonoBehaviour {
 
     public GameObject entityPrefab;
@@ -11,32 +10,50 @@ public class GameController : MonoBehaviour {
     public int unitGenerationTicks;
     public int myPlayerId = 0;
 
+    private bool gameOver = false;
+
     public static GameController instance { get; private set; }
     public List<Building> buildings = new();
 
     private int ticksSinceLastUnitGeneration = 0;
-    private List<AIController> aiPlayers = new();
+    private readonly List<AIController> aiPlayers = new();
 
-    private void StartGame() {
+    public void StartGame() {
         if (playerCount < 2 || playerCount > playerColors.Count) {
             Debug.LogError("Invalid player count!");
             return;
         }
 
-        for (int player = 0; player < playerCount; player++) {
-            Building startBuilding = DetermineStartingPosition();
+        gameOver = false;
+        aiPlayers.Clear();
+        buildings.Clear();
+        ticksSinceLastUnitGeneration = 0;
 
-            if (startBuilding == null) {
-                Debug.LogError("Unable to determine suitable starting position for player " + player);
+        bool validMapGenerated;
+        do {
+            validMapGenerated = true;
+            GetComponent<HexagonMap>().Generate();
+
+            if (buildings.Count == 0) {
+                Debug.LogError("Error while generating buildings!");
                 return;
             }
 
-            startBuilding.SetAsStartingBuilding(player);
+            for (int player = 0; player < playerCount; player++) {
+                Building startBuilding = DetermineStartingPosition();
 
-            if (player != myPlayerId) {
-                aiPlayers.Add(new AIController(player));
+                if (startBuilding == null) {
+                    validMapGenerated = false;
+                    break;
+                }
+
+                startBuilding.SetAsStartingBuilding(player);
+
+                if (player != myPlayerId) {
+                    aiPlayers.Add(new AIController(player));
+                }
             }
-        }
+        } while (!validMapGenerated);
     }
 
     private Building DetermineStartingPosition() {
@@ -86,9 +103,15 @@ public class GameController : MonoBehaviour {
     private void CheckForGameOver() {
         if (aiPlayers.All(ai => ai.IsEliminated())) {
             GetComponent<PlayAgainScreenHandler>().GameWon();
+            gameOver = true;
         } else if (buildings.All(building => building.controllingPlayer != myPlayerId)) {
             GetComponent<PlayAgainScreenHandler>().GameOver();
+            gameOver = true;
         }
+    }
+
+    public bool IsGameOver() {
+        return gameOver;
     }
 
     private void Awake() {
@@ -100,11 +123,14 @@ public class GameController : MonoBehaviour {
     }
 
     private void Start() {
-        GetComponent<HexagonMap>().Generate();
         StartGame();
     }
 
     private void FixedUpdate() {
+        if (gameOver) {
+            return;
+        }
+
         ticksSinceLastUnitGeneration++;
 
         if (ticksSinceLastUnitGeneration >= unitGenerationTicks) {

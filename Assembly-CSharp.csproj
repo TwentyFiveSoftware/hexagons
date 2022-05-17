@@ -53,12 +53,12 @@
      <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
      <Compile Include="Assets\Scripts\Hexagon\HexagonType.cs" />
      <Compile Include="Assets\Scripts\Indicators\BuildingArrow.cs" />
+     <Compile Include="Assets\Scripts\Game\PlayAgainScreenHandler.cs" />
      <Compile Include="Assets\Scripts\Hexagon\Hexagon.cs" />
      <Compile Include="Assets\Scripts\Models\Building.cs" />
      <Compile Include="Assets\Scripts\Map\PathFinder.cs" />
      <Compile Include="Assets\Scripts\Enitity\Entity.cs" />
      <Compile Include="Assets\Scripts\Game\GameController.cs" />
-     <Compile Include="Assets\Scripts\Game\PlayAgainScreenHandler.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
